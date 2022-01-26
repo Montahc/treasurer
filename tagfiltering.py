@@ -3,6 +3,8 @@ import json
 import tkinter as tk
 from tkinter import *
 import random
+from record import RecordDisplay as rd
+from style import colors
 
 class loader:
     def loaddata(filename):
@@ -10,8 +12,6 @@ class loader:
             d = json.load(json_file)
             print("Type:", type(d))
             return d
-
-colors = {"ashley_green":"#88b04b", "no_red":"#c86d42", "maybe_blue":"#7979ce", "med_pink": "#c85a9b", "teal":"#4ba77f"}
 
 
 data = loader.loaddata('item_superlist.json')
@@ -22,7 +22,7 @@ for key, value in data.items():
     for k, v in value[0]["Tags"].items():
         if k not in tags:
             tags.append(k)
-    if value[0]["Tags"][choice] == True: 
+    if value[0]["Tags"][choice] == False: 
         options.append(key)
 activetags = {}
 for t in tags:
@@ -68,7 +68,7 @@ def change_color(event):
 x = 0
 y = 0
 for t in tags:
-    l = tk.Label(top_frame, text=str(t), bg=colors["ashley_green"], fg="black")
+    l = tk.Label(top_frame, text=str(t), bg=colors["no_red"], fg="black")
     l.bind("<Button-1>", lambda event:change_color(event),)
     l.grid(row=y, column=x, sticky="ew")
     print(str(x) + " " + str(y))
@@ -83,7 +83,7 @@ all_off.grid(row=y, column=x+1)
 
 
 
-def roll(frame):
+def filtered_table(frame):
     for widget in frame.winfo_children():
         widget.destroy()
     filtered_table = []
@@ -95,6 +95,7 @@ def roll(frame):
     x, y = 0, 0
     for f in filtered_table:
         l = tk.Label(bot_frame, text=f)
+        l.bind("<Button-1>", lambda event:rd.record_display(event.widget.cget("text"), data))
         l.grid(row=y, column=x, sticky="ew")
         print(str(x) + " " + str(y))
         if x < 4:
@@ -107,11 +108,7 @@ def roll(frame):
 
 
 roll_item = tk.Button(top_frame, text="Roll Item")
-roll_item.bind("<Button-1>", lambda event:roll(bot_frame))
+roll_item.bind("<Button-1>", lambda event:filtered_table(bot_frame))
 roll_item.grid(row=y, column=x+2)
-"""for o in options:
-    l = tk.Label(text=str(o))
-    l.pack()
-    labels.append(l)
-"""
+
 window.mainloop()

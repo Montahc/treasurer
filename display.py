@@ -1,6 +1,7 @@
 import dataclasses
 import json
 import tkinter as tk
+from tkinter import *
 import random
 
 class loader:
@@ -30,6 +31,10 @@ for t in tags:
 
 
 window = tk.Tk(baseName="Report Window")
+top_frame = Frame(window)
+top_frame.grid(row=0, column=0)
+bot_frame = Frame(window)
+bot_frame.grid(row=1, column=0)
 labels = []
 taglabels = []
 def all_true(event): 
@@ -44,12 +49,10 @@ def all_false(event):
         t.config(bg=colors["no_red"])
         activetags[t.cget("text")] = False
 
-all_on = tk.Label(text="all")
+all_on = tk.Label(top_frame, text="all")
 all_on.bind("<Button-1>", lambda event:all_true(event))
-all_off = tk.Label(text="none")
+all_off = tk.Label(top_frame, text="none")
 all_off.bind("<Button-1>", lambda event:all_false(event))
-
-
 
 
 def change_color(event):
@@ -65,7 +68,7 @@ def change_color(event):
 x = 0
 y = 0
 for t in tags:
-    l = tk.Label(text=str(t), bg=colors["ashley_green"], fg="black")
+    l = tk.Label(top_frame, text=str(t), bg=colors["ashley_green"], fg="black")
     l.bind("<Button-1>", lambda event:change_color(event),)
     l.grid(row=y, column=x, sticky="ew")
     print(str(x) + " " + str(y))
@@ -80,17 +83,31 @@ all_off.grid(row=y, column=x+1)
 
 
 
-def roll():
+def roll(frame):
+    for widget in frame.winfo_children():
+        widget.destroy()
     filtered_table = []
     for key, value in data.items():
         for t in value[0]["Tags"]:
             if value[0]["Tags"][t] and value[0]["Tags"][t] == activetags[t]:
                 filtered_table.append(key)
                 continue
+    x, y = 0, 0
+    for f in filtered_table:
+        l = tk.Label(bot_frame, text=f)
+        l.grid(row=y, column=x, sticky="ew")
+        print(str(x) + " " + str(y))
+        if x < 4:
+            x+=1
+        else:
+            y+=1
+            x=0
     print (filtered_table)
     return filtered_table
-roll_item = tk.Button(text="Roll Item")
-roll_item.bind("<Button-1>", lambda event:roll())
+
+
+roll_item = tk.Button(top_frame, text="Roll Item")
+roll_item.bind("<Button-1>", lambda event:roll(bot_frame))
 roll_item.grid(row=y, column=x+2)
 """for o in options:
     l = tk.Label(text=str(o))

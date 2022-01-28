@@ -8,6 +8,3 @@ class loader:
             d = json.load(json_file)
             print("Type:", type(d))
             return d
-
-
-data = loader.loaddata('item_superlist.json')

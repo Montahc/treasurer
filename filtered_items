@@ -1,0 +1,31 @@
+
+
+
+
+def filtered_table(frame):
+    for widget in frame.winfo_children():
+        widget.destroy()
+    filtered_table = []
+    for key, value in data.items():
+        for t in value[0]["Tags"]:
+            if value[0]["Tags"][t] and value[0]["Tags"][t] == activetags[t]:
+                filtered_table.append(key)
+                continue
+    x, y = 0, 0
+    for f in filtered_table:
+        l = tk.Label(bot_frame, text=f)
+        l.bind("<Button-1>", lambda event:rd.record_display(event.widget.cget("text"), data))
+        l.grid(row=y, column=x, sticky="ew")
+        print(str(x) + " " + str(y))
+        if x < 4:
+            x+=1
+        else:
+            y+=1
+            x=0
+    print (filtered_table)
+    return filtered_table
+
+
+roll_item = tk.Button(top_frame, text="Roll Item")
+roll_item.bind("<Button-1>", lambda event:filtered_table(bot_frame))
+roll_item.grid(row=y, column=x+2)

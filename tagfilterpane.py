@@ -1,14 +1,14 @@
 
 import tkinter as tk
 import random
-from record import RecordDisplay as rd
 from style import colors
+from filtereditemlist import filtered_table
 
 class tag_filter_pane(tk.Frame):
     def __init__(self, parent, data):
         self.data = data
-        #super(tk.Frame, self).__init__()
-        self.frame = tk.Frame(parent)
+        tk.Frame.__init__(self, parent)
+        #self.frame = tk.Frame(parent)
         self.tags = []
         self.activetags = {}
         self.labels = []
@@ -62,6 +62,13 @@ class tag_filter_pane(tk.Frame):
         all_on.grid(row=y, column=x)
         all_off.grid(row=y, column=x+1)
 
+        item_table = filtered_table(self)
+
+        roll_item = tk.Button(self, text="Roll Item")
+        roll_item.bind("<Button-1>", lambda event:item_table.roll(self.data, self.activetags))
+        roll_item.grid(row=y, column=x+2)
+
+        item_table.grid(row = y+1, columnspan = 5)
 
 
 

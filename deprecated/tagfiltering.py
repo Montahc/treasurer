@@ -80,7 +80,6 @@ def filtered_table(frame):
         l = tk.Label(bot_frame, text=f)
         l.bind("<Button-1>", lambda event:rd.record_display(event.widget.cget("text"), data))
         l.grid(row=y, column=x, sticky="ew")
-        print(str(x) + " " + str(y))
         if x < 4:
             x+=1
         else:

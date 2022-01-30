@@ -4,6 +4,7 @@ from tagfilterpane import tag_filter_pane
 import tkinter as tk
 
 data = loader.loaddata('item_superlist.json')
+loader.writedata(data, "test2.json")
 
 
 window = tk.Tk()

@@ -8,3 +8,7 @@ class loader:
             d = json.load(json_file)
             print("Type:", type(d))
             return d
+
+    def writedata(json_string, filename):
+        with open(filename, 'w', encoding="Latin-1") as outfile:
+            json.dump(json_string, outfile)

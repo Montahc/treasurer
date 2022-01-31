@@ -1,5 +1,5 @@
 import tkinter as tk
-from record import RecordDisplay as rd
+from record import record_display as rd
 
 
 class filtered_table(tk.Frame):

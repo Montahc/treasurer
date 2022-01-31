@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from style import colors
+import pyperclip
 
 
 class record_display(tk.Tk):
@@ -21,14 +22,16 @@ class record_display(tk.Tk):
         self.title("Record: " + choice)
         top_frame = Frame(self)
         top_frame.grid(row=0, column=0, sticky="n")
-        item_info_frame = Frame(top_frame)
-        item_info_frame.grid(row=0, column=0, sticky="n")
+        self.item_info_frame = Frame(top_frame)
+        self.item_info_frame.grid(row=0, column=0, sticky="n")
+
+        def label_to_clipboard(event):
+            pyperclip.copy(event.widget.cget("text"))
 
 
-
-
-        mainlabel = tk.Label(item_info_frame, text=choice, justify='center', font=("Arial", 25))
+        mainlabel = tk.Label(self.item_info_frame, text=choice, justify='center', font=("Arial", 25))
         mainlabel.grid(row=0, column=0, columnspan=3, sticky='ew')
+        mainlabel.bind("<Button-1>", lambda event:label_to_clipboard(event))
 
         def frame_grid(parent, list):        
                     x, y = 0, 0
@@ -51,17 +54,17 @@ class record_display(tk.Tk):
         text_items = []
         for key, value in chosen.items():
             if key == "Tags":
-                l = tk.Label(item_info_frame, text=key)
+                l = tk.Label(self.item_info_frame, text=key)
                 l.grid(row=y, column=x)
-                f = frame_grid(item_info_frame, value)
+                f = frame_grid(self.item_info_frame, value)
                 f.grid(row=y, column=x+1)
                 y += 1
             else:
                 print(str(key) + " " + str(value))
-                l = tk.Label(item_info_frame, text=key)
+                l = tk.Label(self.item_info_frame, text=key)
                 l.grid(row = y, column = x)
                 height = min(10, len(str(value)) // width + 1)
-                t = tk.Text(item_info_frame, height=height, width=width)
+                t = tk.Text(self.item_info_frame, height=height, width=width)
                 t.insert("1.0", value)
                 t.config(state="disabled")
                 text_items.append(t)
@@ -69,7 +72,7 @@ class record_display(tk.Tk):
                 y += 1
 
         def edit_update(event):
-            items = item_info_frame.grid_slaves()
+            items = self.item_info_frame.grid_slaves()
             if not self.editable:
                 self.editable = True
                 event.widget.config(text="Update")
@@ -100,6 +103,5 @@ class record_display(tk.Tk):
                 if str(type(items[i])) == "<class 'tkinter.Text'>":
                     minor_value = items[i].get("1.0", END)
                 if minor_key and minor_value:
-                    print(str(data[major_key]) + " : " + minor_key + " : " + minor_value)
                     data[major_key][0][minor_key] = minor_value
                 i+=2

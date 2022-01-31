@@ -1,13 +1,19 @@
 from loader import loader
 import asyncio
+import random
 from tagfilterpane import tag_filter_pane
 import tkinter as tk
 from record import record_display
 from tkinter import messagebox
 
-data = loader.loaddata('item_superlist.json')
+filename = 'item_superlist.json'
 
-window = record_display("Karui Sabre", data)
+data = loader.loaddata(filename)
+
+
+choice = random.choice(list(data))
+print(choice)
+window = record_display(choice, data)
 
 def on_closing():
     response = messagebox.askyesnocancel("Save and Quit?", "Do you want to save changes before you quit?")
@@ -15,9 +21,9 @@ def on_closing():
         pass
     elif response:
         #save
-        window.save_record(data, window.get_info_widgets(window))
-        loader.writedata(data)
         print("save")
+        record_display.save_record(data, window.get_info_widgets())
+        loader.writedata(data, filename)
         window.destroy()
     else:
         #nosave

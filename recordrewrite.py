@@ -2,51 +2,55 @@ import tkinter as tk
 from tkinter import *
 from style import colors
 
-editable = False
-parent = "null"
-class RecordDisplay:
 
-    def frame_grid(parent, list):        
-        x, y = 0, 0
-        f = tk.Frame(parent)
-        #t is a list in format "TAG":"TRUE/FALSE"
-        for t in list:
-            tl = tk.Label(f, text=str(t), bg=colors["no_red"], fg="black")
-            if list[t]:
-                tl.config(bg=colors["ashley_green"])
-            tl.grid(row=y, column=x, sticky="ew")
-            if x < 4:
-                x+=1
-            else:
-                y+=1
-                x=0
-        return f
+class record_display(tk.Tk):
 
-    def record_display(choice, data):
+    def __init__(self, choice, data):
+        tk.Tk.__init__(self)
+        self.setup(choice, data)
+        self.editable = False
+        self.parent = "null"
+
+    
+
+    def setup(self, choice, data):
         chosen = data[choice][0]
         global colors
 
-        window = tk.Tk()
-        window.title("Record: " + choice)
-        top_frame = Frame(window)
+        self.title("Record: " + choice)
+        top_frame = Frame(self)
         top_frame.grid(row=0, column=0, sticky="n")
         item_info_frame = Frame(top_frame)
         item_info_frame.grid(row=0, column=0, sticky="n")
 
-
         mainlabel = tk.Label(item_info_frame, text=choice, justify='center', font=("Arial", 25))
         mainlabel.grid(row=0, column=0, columnspan=3, sticky='ew')
 
+        def frame_grid(parent, list):        
+                    x, y = 0, 0
+                    f = tk.Frame(parent)
+                    #t is a list in format "TAG":"TRUE/FALSE"
+                    for t in list:
+                        tl = tk.Label(f, text=str(t), bg=colors["no_red"], fg="black")
+                        if list[t]:
+                            tl.config(bg=colors["ashley_green"])
+                        tl.grid(row=y, column=x, sticky="ew")
+                        if x < 4:
+                            x+=1
+                        else:
+                            y+=1
+                            x=0
+                    return f
+
+
         x, y = 0, 2
         width = 40
-        
-
         text_items = []
         for key, value in chosen.items():
             if key == "Tags":
                 l = tk.Label(item_info_frame, text=key)
                 l.grid(row=y, column=x)
-                f = RecordDisplay.frame_grid(item_info_frame, value)
+                f = frame_grid(item_info_frame, value)
                 f.grid(row=y, column=x+1)
                 y += 1
             else:
@@ -62,16 +66,15 @@ class RecordDisplay:
                 y += 1
 
         def edit_update(event):
-            global editable
 
             items = item_info_frame.grid_slaves()
-            if not editable:
-                editable = True
+            if not self.editable:
+                self.editable = True
                 event.widget.config(text="Update")
                 for t in text_items:
                     t.config(state="normal")
             else:
-                editable = False
+                self.editable = False
                 for t in text_items:
                     t.config(state="disabled")
                 event.widget.config(text="Edit")
@@ -94,7 +97,5 @@ class RecordDisplay:
 
         cancel_button = tk.Button(top_frame, text="Cancel")
         cancel_button.grid(row=1, column=2, columnspan=2, sticky="w",ipadx=40, ipady=10)
-        cancel_button.bind("<Button-1>", lambda event:window.destroy())
-        
-        return RecordDisplay
+        cancel_button.bind("<Button-1>", lambda event:self.destroy())
 

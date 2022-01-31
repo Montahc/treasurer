@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import *
 from style import colors
+from tag_grid import tag_grid
+
 
 editable = False
 parent = "null"
@@ -44,6 +46,7 @@ class RecordDisplay:
         text_items = []
         for key, value in chosen.items():
             if key == "Tags":
+
                 l = tk.Label(item_info_frame, text=key)
                 l.grid(row=y, column=x)
                 f = RecordDisplay.frame_grid(item_info_frame, value)

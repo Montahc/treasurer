@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import *
 from style import colors
 import pyperclip
+from tag_grid import tag_grid
+
 
 
 class record_display(tk.Tk):
@@ -28,26 +30,10 @@ class record_display(tk.Tk):
         def label_to_clipboard(event):
             pyperclip.copy(event.widget.cget("text"))
 
-
         mainlabel = tk.Label(self.item_info_frame, text=choice, justify='center', font=("Arial", 25))
         mainlabel.grid(row=0, column=0, columnspan=3, sticky='ew')
         mainlabel.bind("<Button-1>", lambda event:label_to_clipboard(event))
 
-        def frame_grid(parent, list):        
-                    x, y = 0, 0
-                    f = tk.Frame(parent)
-                    #t is a list in format "TAG":"TRUE/FALSE"
-                    for t in list:
-                        tl = tk.Label(f, text=str(t), bg=colors["no_red"], fg="black")
-                        if list[t]:
-                            tl.config(bg=colors["ashley_green"])
-                        tl.grid(row=y, column=x, sticky="ew")
-                        if x < 4:
-                            x+=1
-                        else:
-                            y+=1
-                            x=0
-                    return f
 
         x, y = 0, 2
         width = 40
@@ -56,8 +42,8 @@ class record_display(tk.Tk):
             if key == "Tags":
                 l = tk.Label(self.item_info_frame, text=key)
                 l.grid(row=y, column=x)
-                f = frame_grid(self.item_info_frame, value)
-                f.grid(row=y, column=x+1)
+                tg = tag_grid(self.item_info_frame, data, column_max=10, editable=False, chosen=chosen)
+                tg.grid(row = y, column=x+1,)
                 y += 1
             else:
                 print(str(key) + " " + str(value))
@@ -78,12 +64,14 @@ class record_display(tk.Tk):
                 event.widget.config(text="Update")
                 for t in text_items:
                     t.config(state="normal")
+                tg.set_editable(True)
             else:
                 self.editable = False
                 for t in text_items:
                     t.config(state="disabled")
+                tg.set_editable(True)
                 event.widget.config(text="Edit")
-                record_display.save_record(data, items)
+                record_display.save_record(data, items, tg.get_tags())
         update_button = tk.Button(top_frame, text="Edit")
         update_button.grid(row=1, column=0, columnspan=2, sticky="e",ipadx=40, ipady=10)
         update_button.bind("<Button-1>", lambda event:edit_update(event))
@@ -93,9 +81,10 @@ class record_display(tk.Tk):
         cancel_button.grid(row=1, column=2, columnspan=2, sticky="w",ipadx=40, ipady=10)
         cancel_button.bind("<Button-1>", lambda event:self.destroy())
 
-    def save_record(data, items):
+    def save_record(data, items, tags):
             i=0
             major_key = items[16].cget("text")
+            data[major_key][0]["Tags"] = tags
             while i < (len(items)-1):
                 minor_key, minor_value = False, False
                 if str(type(items[i+1])) == "<class 'tkinter.Label'>":

@@ -1,5 +1,5 @@
 import tkinter as tk
-from record import record_display as rd
+from record import record_display
 
 
 class filtered_table(tk.Frame):
@@ -20,7 +20,7 @@ class filtered_table(tk.Frame):
         x, y = 0, 0
         for f in current_table:
             l = tk.Label(self, text=f)
-            l.bind("<Button-1>", lambda event:rd.record_display(event.widget.cget("text"), data))
+            l.bind("<Button-1>", lambda event:record_display(event.widget.cget("text"), data))
             l.grid(row=y, column=x, sticky="ew")
             if x < 4:
                 x+=1

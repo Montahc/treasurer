@@ -3,7 +3,7 @@ import json
 import tkinter as tk
 from tkinter import *
 import random
-from recordrewrite import RecordDisplay as rd
+from record import RecordDisplay as rd
 from style import colors
 from loader import loader
 

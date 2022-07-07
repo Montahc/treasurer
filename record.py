@@ -8,17 +8,17 @@ from tag_grid import tag_grid
 
 class record_display(tk.Tk):
 
-    def __init__(self, choice, data):
+    def __init__(self, parent, choice, data):
         tk.Tk.__init__(self)
         self.setup(choice, data)
         self.editable = False
-        self.parent = "null"
+        self.parent = parent
 
     def get_info_widgets(self):
         return self.item_info_frame.grid_slaves()
 
     def setup(self, choice, data):
-        chosen = data[choice][0]
+        chosen = data[choice]
         global colors
 
         self.title("Record: " + choice)
@@ -84,7 +84,7 @@ class record_display(tk.Tk):
     def save_record(data, items, tags):
             i=0
             major_key = items[16].cget("text")
-            data[major_key][0]["Tags"] = tags
+            data[major_key]["Tags"] = tags
             while i < (len(items)-1):
                 minor_key, minor_value = False, False
                 if str(type(items[i+1])) == "<class 'tkinter.Label'>":
@@ -92,5 +92,11 @@ class record_display(tk.Tk):
                 if str(type(items[i])) == "<class 'tkinter.Text'>":
                     minor_value = items[i].get("1.0", END)
                 if minor_key and minor_value:
-                    data[major_key][0][minor_key] = minor_value
+                    data[major_key][minor_key] = minor_value
                 i+=2
+
+    def on_closing(self):
+        self.parent.reroll()
+        self.destroy()
+    
+    

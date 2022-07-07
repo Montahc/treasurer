@@ -4,7 +4,7 @@ from loader import loader
 
 
 class tag_grid(tk.Frame):
-    def __init__(self, parent, data, column_max = None, editable=True, chosen=None):
+    def __init__(self, parent, data, filter="all", column_max = None, editable=True, chosen=None):
         self.data = data
         tk.Frame.__init__(self, parent)
         self.tags = {}
@@ -16,9 +16,10 @@ class tag_grid(tk.Frame):
         else:
             self.chosen = False
         self.editable = editable
+        self.filter = filter
         
         self.tagprep()
-        self.labelsetup(column_max)
+        self.labelsetup("dynamic")
 
 
 
@@ -32,13 +33,13 @@ class tag_grid(tk.Frame):
                 self.tags[k] = v
         else:
             for key, value in self.data.items():
-                for k, v in value[0]["Tags"].items():
-                    if k not in self.tags:
+                for k, v in value["Tags"].items():
+                    if k not in self.tags and (self.filter == "all" or k in self.filter):
                         self.tags[k] = False
 
     def labelsetup(self, column_max=None):
-        if column_max is None:
-            column_max = 4
+        if column_max == "dynamic":
+            column_max = 1920//100
         else:
             column_max -= 1
         def change_color(event):

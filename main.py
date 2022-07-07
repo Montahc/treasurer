@@ -38,23 +38,32 @@ window.protocol("WM_DELETE_WINDOW", on_closing)
 
 window = tk.Tk()
 window.title("Treasurer")
-top_frame = tag_filter_pane(window, data)
-top_frame.grid(row=0, column=0)
+def d(event):
+    print(event)
+    #print(event.width,event.height)
+    for c in window.winfo_children():
+        c.pack()
+
+window.bind('<Configure>',d)
+window.geometry("1280x720")
+window.maxsize(1920,1017)
+tag_filter_pane(window, data)
 
 
 def on_closing():
-    response = messagebox.askyesnocancel("Save and Quit?", "Do you want to save changes before you quit?")
-    if response is None:
-        pass
-    elif response:
-        # save
-        print("save")
-        loader.writedata(data, filename)
-        window.destroy()
-    else:
-        # nosave
-        print("nosave")
-        window.destroy()
+    exit()
+#     response = messagebox.askyesnocancel("Save and Quit?", "Do you want to save changes before you quit?")
+#     if response is None:
+#         pass
+#     elif response:
+#         # save
+#         print("save")
+#         loader.writedata(data, filename)
+#         window.destroy()
+#     else:
+#         # nosave
+#         print("nosave")
+#         window.destroy()
 
 window.protocol("WM_DELETE_WINDOW", on_closing)
 

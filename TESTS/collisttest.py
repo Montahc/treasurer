@@ -13,6 +13,7 @@ s.theme_use('clam')
 
 # Add a Treeview widget
 tree = ttk.Treeview(win, column=("c1", "c2", "c3"), show='headings', height=5)
+tree.config(column=("c1", "c2", "c3"))
 
 tree.column("# 1", anchor=CENTER)
 tree.heading("# 1", text="ID")

@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 from record import record_display
 
 MAXWIDTH = 51
@@ -6,10 +7,10 @@ WRAP = 400
 WIDTH = 50
 HEIGHT = 5
 
-class filtered_table(tk.Canvas):
+class filtered_table(ttk.Treeview):
 
     def __init__(self, parent):
-        tk.Canvas.__init__(self, parent)
+        ttk.Treeview.__init__(self, parent, show='headings', height=25)
         self.data = "null"
         self.activetags = "null"
         self.mode = "null"
@@ -20,89 +21,76 @@ class filtered_table(tk.Canvas):
         self.data = data
         self.activetags = activetags
         self.mode = mode
-        for widget in self.winfo_children():
-            widget.destroy()
-        current_table = {}
-        scrollbar = tk.Scrollbar(self, command=self.yview)
-        self.config(yscrollcommand=scrollbar.set)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        for item in self.get_children():
+            self.delete(item)
 
-        for key, value in data.items():
-            for t in value["Tags"]:
-                if t in activetags:
-                    if value["Tags"][t] and value["Tags"][t] == activetags[t]:
-                        current_table[key] = value
-                        continue
-        
-        if mode == "list":
-            x, y = 0, 0
-            for k, v in current_table.items():
-                l = tk.Label(self, text=k)
-                l.bind("<Button-1>", lambda event:record_display(self, event.widget.cget("text"), data))
-                l.grid(row=y, column=x, sticky="ew")
-                if x < 4:
-                    x+=1
-                else:
-                    y+=1
-                    x=0
+        current_table = filter_table(data, activetags)
                     
-        elif mode == "table":
-            x, y = 0, 0
-            rows = []
-            header = headers(data, "Name")#["Name", "ID", "Weight", "Source", "Rarity", "Base Items", "Desc", "GP", "Tags"]
+        if mode == "table":
+            header = headers(data)#["Name", "ID", "Weight", "Source", "Rarity", "Base Items", "Desc", "GP", "Tags"]
             headerAdded = False
+            x=0
             for k, v in current_table.items():
                 #Set up header row if it has not yet been set
                 if not headerAdded:
-                    rows.append(tk.Frame(self, relief="groove"))
-                    for i, n in header.items():
-                        if i == "Tags":
-                            continue
-                        l = tk.Label(rows[y], text=i, anchor="nw", relief="raised", width=n)
-                        l.grid(row=0, column=x, sticky="ew", pady=2, padx=1)
-                        x+=1
-                    rows[y].pack()
-                    y+=1
-                    x=0
+                    print("header", header)
+                    self.config(column=header)
+                    
+                    j=0
+                    for i in header:
+                        # self.column("# " + str(j), anchor="w")
+                        self.heading(i, text=i, command=lambda _col=i: 
+                                    treeview_sort_column(self, _col, False))
+                        j += 1
+
                     headerAdded = True
-
+                text = list(v.values())
+                text = list(map(str, text))
+                text.insert(0, str(k))
                 #add item name as first column in each item
-                rows.append(tk.Frame(self, relief="groove"))
-                l = tk.Label(rows[y], text=k, width=header["Name"], height=HEIGHT, anchor="nw",relief="groove")
-                l.bind("<Button-1>", lambda event:record_display(self, event.widget.cget("text"), data))
-                l.grid(row=0, column=x, sticky="nw", pady=2)
-                x+=1
+                self.insert('', 'end', text=str(x), values=text, tags=('ttk'))
 
-                #add remaining elements
-                for s in v:
-                    text = str(v[s])
-                    if text == "": text = "-"
-                    if s == "Tags":
-                        continue
-                    if len(text) > header[s]:
-                        l = tk.Label(rows[y], text=text, width=header[s], wraplength=WRAP, height=HEIGHT, anchor="nw", relief="groove")
-                        l.grid(row=0, column=x, sticky="nw", pady=2)
-                    else:
-                        l = tk.Label(rows[y], text=text, width=header[s], anchor="nw",relief="groove")
-                        l.grid(row=0, column=x, sticky="nw", pady=2)
-                    x+=1
-                rows[y].pack()
-                y+=1
-                x=0
-    def reroll(self):
-        self.roll(self.data, self.activetags, self.mode)
+                x += 1
 
+            self.bind("<Double-1>", self.OnDoubleClick)
 
-def headers(dict, keyname):
-    header = {}
-    header[keyname] = len(keyname)
+    def OnDoubleClick(self, event):
+        item = self.selection()[0]
+        print("you clicked on", self.item(item,"values")[0])
+        record_display(self, self.item(item,"values")[0], self.data)
+
+            
+def reroll(self):
+    self.roll(self.data, self.activetags, self.mode)
+
+#headers(dict, keyname) -> list
+def headers(dict):
+    header = ["Name"]
     for k, v in dict.items():
-        if MAXWIDTH > len(k) > header[keyname]: 
-            header[keyname] = len(k)
         for s in v:
-            if s not in header: header[s] = len(str(v[s]))
-            if MAXWIDTH > len(str(v[s])) > header[s]: 
-                header[s] = len(str(v[s]))
+            if s not in header: header.append(s)
 
     return header
 
+def filter_table(d, tags):
+    c = {}
+    for key, value in d.items():
+        for t in value["Tags"]:
+            if t in tags:
+                if value["Tags"][t] and value["Tags"][t] == tags[t]:
+                    c[key] = value
+                    continue
+    
+    return c
+
+def treeview_sort_column(tv, col, reverse):
+    l = [(tv.set(k, col), k) for k in tv.get_children('')]
+    l.sort(reverse=reverse)
+
+    # rearrange items in sorted positions
+    for index, (val, k) in enumerate(l):
+        tv.move(k, '', index)
+
+    # reverse sort next time
+    tv.heading(col, text=col, command=lambda _col=col: 
+                 treeview_sort_column(tv, _col, not reverse))

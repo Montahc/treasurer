@@ -8,7 +8,6 @@ class tag_grid(tk.Frame):
         self.data = data
         tk.Frame.__init__(self, parent)
         self.tags = {}
-        #self.labels = []
         self.taglabels = []
         print(chosen)
         if chosen:

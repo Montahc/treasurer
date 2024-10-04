@@ -9,7 +9,7 @@ class tag_grid(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.tags = {}
         self.taglabels = []
-        print(chosen)
+        ##print(chosen)
         if chosen:
             self.chosen = chosen
         else:
@@ -46,15 +46,24 @@ class tag_grid(tk.Frame):
                 if event.widget.cget("bg") == colors["ashley_green"]:
                     event.widget.config(bg= colors["no_red"])
                     self.tags[event.widget.cget("text")] = False
+                    print("Green>Red")
+                elif event.widget.cget("bg") == colors["no_red"]:
+                    event.widget.config(bg= colors["neut_gray"])
+                    self.tags[event.widget.cget("text")] = None
+                    print("Red>White")
                 else:
                     event.widget.config(bg=colors["ashley_green"])
                     self.tags[event.widget.cget("text")] = True
+                    print("White>Green")
             
         x, y = 0, 0
         for t in list(self.tags):
             l = tk.Label(self, text=str(t), bg=colors["no_red"], fg="black")
             if self.tags[t]:
                 l.config(bg=colors["ashley_green"])
+            else:
+                self.tags[t] = None
+                l.config(bg=colors["neut_gray"])
             l.bind("<Button-1>", lambda event:change_color(event),)
             l.grid(row=y, column=x, sticky="ew")
             if x < column_max:
@@ -73,15 +82,26 @@ class tag_grid(tk.Frame):
             for t in self.taglabels:
                 t.config(bg=colors["no_red"])
                 self.tags[t.cget("text")] = False
+                ##print("all_false " + t.cget("text") + str(self.tags[t.cget("text")]))
+        
+        def all_reset(event): 
+            for t in self.taglabels:
+                t.config(bg=colors["neut_gray"])
+                self.tags[t.cget("text")] = None
 
 
-        all_on = tk.Label(self, text="all")
+        all_on = tk.Label(self, text="WL All")
         all_on.bind("<Button-1>", lambda event:all_true(event))
         all_on.grid(row=y, column=x)
 
-        all_off = tk.Label(self, text="none")
+        all_off = tk.Label(self, text="BL All")
         all_off.bind("<Button-1>", lambda event:all_false(event))
         all_off.grid(row=y, column=x+1)
 
-    def get_tags(self):
+        all_none = tk.Label(self, text="Reset All")
+        all_none.bind("<Button-1>", lambda event:all_reset(event))
+        all_none.grid(row=y, column=x+2)
+
+    def get_whitelist(self):
         return self.tags
+

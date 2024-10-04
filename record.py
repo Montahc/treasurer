@@ -46,7 +46,7 @@ class record_display(tk.Tk):
                 tg.grid(row = y, column=x+1,)
                 y += 1
             else:
-                print(str(key) + " " + str(value))
+                ##(str(key) + " " + str(value))
                 l = tk.Label(self.item_info_frame, text=key)
                 l.grid(row = y, column = x)
                 height = min(10, len(str(value)) // width + 1)

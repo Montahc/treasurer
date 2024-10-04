@@ -26,7 +26,7 @@ class tag_filter_pane(tk.Frame):
         item_table = filtered_table(self)
         item_table.pack(side="bottom")
 
-        roll_item.bind("<Button-1>", lambda event:item_table.roll(self.data, tabControl.nametowidget(tabControl.select()).get_tags(), mode="table"))
+        roll_item.bind("<Button-1>", lambda event:item_table.roll(self.data, tabControl.nametowidget(tabControl.select()).get_whitelist(), mode="table"))
 
 
 

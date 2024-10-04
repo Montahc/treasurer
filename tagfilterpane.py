@@ -20,6 +20,7 @@ class tag_filter_pane(tk.Frame):
         
         self.pack(side="left")
         tabControl.pack(side="top")
+        
         roll_item = tk.Button(self, text="Roll Items")
         roll_item.pack(fill="x", side="top", pady=10, padx=10)
 

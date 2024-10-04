@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from record import record_display
+import misctools as MT
 
 MAXWIDTH = 51
 WRAP = 400
@@ -33,7 +34,7 @@ class filtered_table(ttk.Treeview):
         self.config(height=min(ITEMS, len(current_table)))
         if mode == "table":
             # ["Name", "ID", "Weight", "Source", "Rarity", "Base Items", "Desc", "GP", "Tags"]
-            header = headers(data)
+            header = headers(current_table)
             headerAdded = False
             x = 0
             for k, v in current_table.items():
@@ -56,9 +57,12 @@ class filtered_table(ttk.Treeview):
                 # add item name as first column in each item
                 self.insert('', 'end', text=str(x), values=text, tags=('ttk'))
 
+                ##self.bind("<ButtonRelease-1>", lambda event:print(self.focus_get()))
+                self.bind("<Double-ButtonRelease-1>", lambda event:record_display(self.parent, 
+                                                                    self.item(self.focus())["values"][0],
+                                                                    current_table))
                 x += 1
 
-            #self.bind("<Double-1>", self.OnDoubleClick{})
 
 def oldroll(self, data, activetags, mode="list"):
         self.data = data
@@ -122,11 +126,9 @@ def headers(dict):
 
 def filter_table(d, wl):
     c = {}
-    r = {}
-    w = {}
     for key, value in d.items():
-        print("Starting " + key)
-        print(str(value))
+        #print("Starting " + key)
+        #print(str(value))
 
         include = None
         for v in value["Tags"]:
@@ -134,14 +136,17 @@ def filter_table(d, wl):
 
             if value["Tags"][v]:
                 ##print(key + "has tag" + v + ", continuing.")
-                if wl[v]:
+                evaluate = wl.get(v, -1)
+                if evaluate == -1:
+                    break
+                elif evaluate:
                     ##print(v + " is whitelisted")
                     if value["Tags"][v]:
                         ##print(key + " has whitelisted Tag, including")
                         include = True
-                elif wl[v] is False and value["Tags"][v] is True:
+                elif evaluate is False and value["Tags"][v] is True:
                     include = False
-                elif wl[v] is None:
+                elif evaluate is None:
                     pass
                 else:
                     print("filtered_table, this should never happen")
@@ -156,7 +161,7 @@ def filter_table(d, wl):
                 else:
                     pass
             else:
-                ##print(key + " does not have tag, breaking")
+                #print(key + " does not have tag, breaking")
                 continue
     return c
 

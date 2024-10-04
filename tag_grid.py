@@ -1,10 +1,12 @@
 import tkinter as tk
 from style import colors
+from style import LABEL_WIDTH
 from loader import loader
 
 
 class tag_grid(tk.Frame):
     def __init__(self, parent, data, filter="all", column_max = None, editable=True, chosen=None):
+        print("new tag grid created")
         self.data = data
         tk.Frame.__init__(self, parent)
         self.tags = {}
@@ -34,11 +36,11 @@ class tag_grid(tk.Frame):
             for key, value in self.data.items():
                 for k, v in value["Tags"].items():
                     if k not in self.tags and (self.filter == "all" or k in self.filter):
-                        self.tags[k] = False
+                        self.tags[k] = None
 
     def labelsetup(self, column_max=None):
         if column_max == "dynamic":
-            column_max = 1920//100
+            column_max = 1920//LABEL_WIDTH
         else:
             column_max -= 1
         def change_color(event):
@@ -58,11 +60,12 @@ class tag_grid(tk.Frame):
             
         x, y = 0, 0
         for t in list(self.tags):
-            l = tk.Label(self, text=str(t), bg=colors["no_red"], fg="black")
+            l = tk.Label(self, text=str(t), bg=colors["neut_gray"], fg="black")
             if self.tags[t]:
                 l.config(bg=colors["ashley_green"])
+            elif self.tags[t] is False:
+                l.config(bg=colors["no_red"])
             else:
-                self.tags[t] = None
                 l.config(bg=colors["neut_gray"])
             l.bind("<Button-1>", lambda event:change_color(event),)
             l.grid(row=y, column=x, sticky="ew")

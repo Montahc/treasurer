@@ -11,3 +11,5 @@ colors = {
     "teal":"#4ba77f", 
     "neut_gray":"#AAAAAA"
     }
+
+LABEL_WIDTH = 150

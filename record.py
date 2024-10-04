@@ -9,6 +9,7 @@ from tag_grid import tag_grid
 class record_display(tk.Tk):
 
     def __init__(self, parent, choice, data):
+        print("record: " + str(choice))
         tk.Tk.__init__(self)
         self.setup(choice, data)
         self.editable = False
@@ -42,6 +43,7 @@ class record_display(tk.Tk):
             if key == "Tags":
                 l = tk.Label(self.item_info_frame, text=key)
                 l.grid(row=y, column=x)
+                
                 tg = tag_grid(self.item_info_frame, data, column_max=10, editable=False, chosen=chosen)
                 tg.grid(row = y, column=x+1,)
                 y += 1
@@ -71,7 +73,7 @@ class record_display(tk.Tk):
                     t.config(state="disabled")
                 tg.set_editable(True)
                 event.widget.config(text="Edit")
-                record_display.save_record(data, items, tg.get_tags())
+                record_display.save_record(data, items, tg.tags)
         update_button = tk.Button(top_frame, text="Edit")
         update_button.grid(row=1, column=0, columnspan=2, sticky="e",ipadx=40, ipady=10)
         update_button.bind("<Button-1>", lambda event:edit_update(event))

@@ -51,19 +51,21 @@ tag_filter_pane(window, data)
 
 
 def on_closing():
-    exit()
-#     response = messagebox.askyesnocancel("Save and Quit?", "Do you want to save changes before you quit?")
-#     if response is None:
-#         pass
-#     elif response:
-#         # save
-#         print("save")
-#         loader.writedata(data, filename)
-#         window.destroy()
-#     else:
-#         # nosave
-#         print("nosave")
-#         window.destroy()
+    response = messagebox.askyesnocancel("Save and Quit?", "Do you want to save changes before you quit?")
+    if response is None:
+          pass
+    elif response:
+         # save
+         print("saved on exit")
+         loader.writedata(data, filename)
+         window.destroy()
+         exit()
+    else:
+         # nosave
+         print("no save on exit")
+         window.destroy()
+         exit()
+
 
 window.protocol("WM_DELETE_WINDOW", on_closing)
 
